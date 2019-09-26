@@ -23,7 +23,7 @@ public class CarService {
     private MapsClient mapClient;
     private PriceClient priceClient;
 
-    @Autowired
+
     public CarService(CarRepository repository, MapsClient mapClient, PriceClient priceClient) {
         /**
          * TODO: Add the Maps and Pricing Web Clients you create
@@ -53,12 +53,7 @@ public class CarService {
          *   If it does not exist, throw a CarNotFoundException
          *   Remove the below code as part of your implementation.
          */
-        Car car;
-        if (repository.findById(id).isPresent()){
-            car = repository.findById(id).get();
-        } else {
-            throw new CarNotFoundException("Car Not Found");
-        }
+        Car car = repository.findById(id).orElseThrow(CarNotFoundException::new);
 
 
 
@@ -69,7 +64,7 @@ public class CarService {
          * Note: The car class file uses @transient, meaning you will need to call
          *   the pricing service each time to get the price.
          */
-        String price = priceClient.getPrice(id);
+        String price = priceClient.getPrice(car.getId());
         car.setPrice(price);
 
 
@@ -113,22 +108,8 @@ public class CarService {
      * @param id the ID number of the car to delete
      */
     public void delete(Long id) {
-        /**
-         * TODO: Find the car by ID from the `repository` if it exists.
-         *   If it does not exist, throw a CarNotFoundException
-         */
-        Car car;
-        if (repository.findById(id).isPresent()){
-            car = repository.findById(id).get();
-        } else {
-            throw new CarNotFoundException("Car Not Found");
-        }
+        Car car = repository.findById(id).orElseThrow(CarNotFoundException::new);
 
-
-
-        /**
-         * TODO: Delete the car from the repository.
-         */
         repository.delete(car);
 
     }
