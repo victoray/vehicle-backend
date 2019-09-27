@@ -30,6 +30,15 @@ public class Price {
         this.price = price;
     }
 
+    @Override
+    public String toString() {
+        return "Price{" +
+                "currency='" + currency + '\'' +
+                ", price=" + price +
+                ", vehicleId=" + vehicleId +
+                '}';
+    }
+
     public Long getVehicleId() {
         return vehicleId;
     }
