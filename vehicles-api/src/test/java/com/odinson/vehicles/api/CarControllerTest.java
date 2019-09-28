@@ -7,8 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.odinson.vehicles.client.prices.PriceClient;
 import com.odinson.vehicles.domain.car.Car;
@@ -77,6 +76,7 @@ public class CarControllerTest {
     @Test
     public void createCar() throws Exception {
         Car car = getCar();
+        System.out.println(car);
         mvc.perform(
                 post(new URI("/cars"))
                         .content(json.write(car).getJson())
@@ -91,11 +91,12 @@ public class CarControllerTest {
      */
     @Test
     public void listCars() throws Exception {
-        /**
-         * TODO: Add a test to check that the `get` method works by calling
-         *   the whole list of vehicles. This should utilize the car from `getCar()`
-         *   below (the vehicle will be the first in the list).
-         */
+        mvc.perform(get("/cars"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("_embedded.carList", hasSize(1)))
+                .andExpect(jsonPath("_embedded.carList[0].id", is(1)))
+                .andExpect(jsonPath("_embedded.carList[0].details.modelYear", is(2018)));
 
     }
 
@@ -105,10 +106,11 @@ public class CarControllerTest {
      */
     @Test
     public void findCar() throws Exception {
-        /**
-         * TODO: Add a test to check that the `get` method works by calling
-         *   a vehicle by ID. This should utilize the car from `getCar()` below.
-         */
+        mvc.perform(get("/cars/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("id", is(1)));
+        ;
     }
 
     /**
@@ -117,11 +119,8 @@ public class CarControllerTest {
      */
     @Test
     public void deleteCar() throws Exception {
-        /**
-         * TODO: Add a test to check whether a vehicle is appropriately deleted
-         *   when the `delete` method is called from the Car Controller. This
-         *   should utilize the car from `getCar()` below.
-         */
+        mvc.perform(delete("/cars/1"))
+                .andExpect(status().isNoContent());
     }
 
     /**
